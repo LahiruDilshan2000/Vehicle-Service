@@ -1,7 +1,9 @@
 package lk.ijse.vehicleservice.api;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.validation.Valid;
 import lk.ijse.vehicleservice.dto.VehicleDTO;
+import lk.ijse.vehicleservice.entity.Role;
+import lk.ijse.vehicleservice.exception.UnauthorizedException;
 import lk.ijse.vehicleservice.service.custom.VehicleService;
 import lk.ijse.vehicleservice.util.ResponseUtil;
 import lombok.RequiredArgsConstructor;
@@ -28,9 +30,13 @@ public class VehicleController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseUtil saveVehicle(@RequestParam("imageList") List<MultipartFile> imageList, @RequestParam String vehicle) throws IOException {
+    public ResponseUtil saveVehicle(@RequestPart("imageList") List<MultipartFile> imageList,
+                                    @Valid @RequestPart("vehicle") VehicleDTO vehicleDTO,
+                                    @RequestHeader("X-ROLE") Role role) throws IOException {
 
-        VehicleDTO vehicleDTO = new ObjectMapper().readValue(vehicle, VehicleDTO.class);
+        if (!role.equals(Role.ADMIN_VEHICLE))
+            throw new UnauthorizedException("Un authorized access to application");
+
         return ResponseUtil
                 .builder()
                 .code(200)
@@ -41,9 +47,13 @@ public class VehicleController {
 
     @ResponseStatus(HttpStatus.OK)
     @PutMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseUtil updateVehicle(@RequestParam("imageList") List<MultipartFile> imageList, @RequestParam String vehicle) throws IOException {
+    public ResponseUtil updateVehicle(@RequestPart("imageList") List<MultipartFile> imageList,
+                                      @Valid @RequestPart("vehicle") VehicleDTO vehicleDTO,
+                                      @RequestHeader("X-ROLE") Role role) throws IOException {
 
-        VehicleDTO vehicleDTO = new ObjectMapper().readValue(vehicle, VehicleDTO.class);
+        if (!role.equals(Role.ADMIN_VEHICLE))
+            throw new UnauthorizedException("Un authorized access to application");
+
         return ResponseUtil
                 .builder()
                 .code(200)
@@ -53,7 +63,11 @@ public class VehicleController {
     }
 
     @DeleteMapping(params = {"vehicleId"}, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseUtil deleteVehicle(@RequestParam Integer vehicleId){
+    public ResponseUtil deleteVehicle(@RequestParam Integer vehicleId,
+                                      @RequestHeader("X-ROLE") Role role) {
+
+        if (!role.equals(Role.ADMIN_VEHICLE))
+            throw new UnauthorizedException("Un authorized access to application");
 
         vehicleService.deleteVehicle(vehicleId);
         return ResponseUtil
@@ -64,7 +78,7 @@ public class VehicleController {
     }
 
     @GetMapping(value = "/get", params = {"vehicleId"}, produces = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseUtil getVehicleById(@RequestParam Integer vehicleId){
+    public ResponseUtil getVehicleById(@RequestParam Integer vehicleId) {
 
         return ResponseUtil
                 .builder()
@@ -75,7 +89,7 @@ public class VehicleController {
     }
 
     @GetMapping(value = "/getAll", params = {"page", "count"}, produces = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseUtil getVehiclePageable(@RequestParam Integer page,@RequestParam Integer count){
+    public ResponseUtil getVehiclePageable(@RequestParam Integer page, @RequestParam Integer count) {
 
         return ResponseUtil
                 .builder()
@@ -87,8 +101,9 @@ public class VehicleController {
 
     @GetMapping(value = "/getAllWithCategory", params = {"page", "count", "category"}, produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseUtil getVehicleWithCategory(@RequestParam Integer page,
-                                             @RequestParam Integer count,
-                                             @RequestParam String category){
+                                               @RequestParam Integer count,
+                                               @RequestParam String category) {
+
         return ResponseUtil
                 .builder()
                 .code(200)
@@ -99,8 +114,9 @@ public class VehicleController {
 
     @GetMapping(value = "/getAllWithSeatCapacity", params = {"page", "count", "seatCapacity"}, produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseUtil getVehicleBySeatCapacity(@RequestParam Integer page,
-                                               @RequestParam Integer count,
-                                               @RequestParam Integer seatCapacity){
+                                                 @RequestParam Integer count,
+                                                 @RequestParam Integer seatCapacity) {
+
         return ResponseUtil
                 .builder()
                 .code(200)
@@ -111,8 +127,9 @@ public class VehicleController {
 
     @GetMapping(value = "/getAllWithFuelAndTransmission", params = {"page", "count", "fuelAndTrans"}, produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseUtil getVehicleByFuelAndTransmission(@RequestParam Integer page,
-                                               @RequestParam Integer count,
-                                               @RequestParam String fuelAndTrans){
+                                                        @RequestParam Integer count,
+                                                        @RequestParam String fuelAndTrans) {
+
         return ResponseUtil
                 .builder()
                 .code(200)
@@ -123,9 +140,10 @@ public class VehicleController {
 
     @GetMapping(value = "/getAllWithSeatAndFulWithTrans", params = {"page", "count", "seatCapacity", "fuelAndTrans"}, produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseUtil getVehicleBySeatAndFuelAndTransmission(@RequestParam Integer page,
-                                               @RequestParam Integer count,
-                                               @RequestParam Integer seatCapacity,
-                                               @RequestParam String fuelAndTrans){
+                                                               @RequestParam Integer count,
+                                                               @RequestParam Integer seatCapacity,
+                                                               @RequestParam String fuelAndTrans) {
+
         return ResponseUtil
                 .builder()
                 .code(200)

@@ -29,4 +29,5 @@ public interface VehicleRepository extends JpaRepository<Vehicle, Integer> {
 
     @Query(value = "select v from Vehicle v where v.seatCapacity = ?1 and v.fuelAndTransmissionType = ?2")
     List<Vehicle> getVehicleBySeatAndFuelAndTransmissionType(Integer seatCapacity, String fuelAndTransmissionType, Pageable pageable);
+
 }

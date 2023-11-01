@@ -34,4 +34,5 @@ public interface VehicleService extends SuperService {
                                                               String fuelAndTrans);
 
     VehicleDTO findById(Integer vehicleId);
+
 }
