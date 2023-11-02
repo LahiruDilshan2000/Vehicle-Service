@@ -2,8 +2,6 @@ package lk.ijse.vehicleservice.api;
 
 import jakarta.validation.Valid;
 import lk.ijse.vehicleservice.dto.VehicleDTO;
-import lk.ijse.vehicleservice.entity.Role;
-import lk.ijse.vehicleservice.exception.UnauthorizedException;
 import lk.ijse.vehicleservice.service.custom.VehicleService;
 import lk.ijse.vehicleservice.util.ResponseUtil;
 import lombok.RequiredArgsConstructor;
@@ -31,11 +29,10 @@ public class VehicleController {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseUtil saveVehicle(@RequestPart("imageList") List<MultipartFile> imageList,
-                                    @Valid @RequestPart("vehicle") VehicleDTO vehicleDTO,
-                                    @RequestHeader("X-ROLE") Role role) throws IOException {
+                                    @Valid @RequestPart("vehicle") VehicleDTO vehicleDTO) throws IOException {
 
-        if (!role.equals(Role.ADMIN_VEHICLE))
-            throw new UnauthorizedException("Un authorized access to application");
+        /*if (!role.equals(Role.ADMIN_VEHICLE))
+            throw new UnauthorizedException("Un authorized access to application");*/
 
         return ResponseUtil
                 .builder()
@@ -48,11 +45,7 @@ public class VehicleController {
     @ResponseStatus(HttpStatus.OK)
     @PutMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseUtil updateVehicle(@RequestPart("imageList") List<MultipartFile> imageList,
-                                      @Valid @RequestPart("vehicle") VehicleDTO vehicleDTO,
-                                      @RequestHeader("X-ROLE") Role role) throws IOException {
-
-        if (!role.equals(Role.ADMIN_VEHICLE))
-            throw new UnauthorizedException("Un authorized access to application");
+                                      @Valid @RequestPart("vehicle") VehicleDTO vehicleDTO) throws IOException {
 
         return ResponseUtil
                 .builder()
@@ -63,11 +56,10 @@ public class VehicleController {
     }
 
     @DeleteMapping(params = {"vehicleId"}, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseUtil deleteVehicle(@RequestParam Integer vehicleId,
-                                      @RequestHeader("X-ROLE") Role role) {
+    public ResponseUtil deleteVehicle(@RequestParam Integer vehicleId) {
 
-        if (!role.equals(Role.ADMIN_VEHICLE))
-            throw new UnauthorizedException("Un authorized access to application");
+        /*if (!role.equals(Role.ADMIN_VEHICLE))
+            throw new UnauthorizedException("Un authorized access to application");*/
 
         vehicleService.deleteVehicle(vehicleId);
         return ResponseUtil
